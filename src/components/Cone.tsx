@@ -7,15 +7,13 @@ import { useClickStore, useConeStore } from '../store';
 import { ConePoints } from '../types.ts';
 
 type Props = {
-  currentX: number;
-  currentY: number;
+  angle: number;
   conePoints: ConePoints;
-  onConePointsChange: (points: ConePoints) => void;
+  onConePointsChange: (angle: number, delta: number) => void;
 };
 
-const ConeVisual = ({ currentX, currentY, conePoints, onConePointsChange }: Props) => {
-  const x = useMotionValue(currentX);
-  const y = useMotionValue(currentY);
+const ConeVisual = ({ angle, conePoints, onConePointsChange }: Props) => {
+  const newAngle = useMotionValue(angle);
   const delta = useMotionValue(INITIAL_DELTA);
 
   const conePolygonPoints = useMemo(
@@ -24,17 +22,15 @@ const ConeVisual = ({ currentX, currentY, conePoints, onConePointsChange }: Prop
   );
 
   const updatePoints = () => {
-    onConePointsChange(computeConePoints(x.get(), y.get(), delta.get()));
+    onConePointsChange(newAngle.get(), delta.get());
   };
 
-  useMotionValueEvent(x, 'change', updatePoints);
-  useMotionValueEvent(y, 'change', updatePoints);
+  useMotionValueEvent(newAngle, 'change', updatePoints);
   useMotionValueEvent(delta, 'change', updatePoints);
 
   useEffect(() => {
-    animate(x, currentX, { duration: 1, ease: 'easeInOut' });
-    animate(y, currentY, { duration: 1, ease: 'easeInOut' });
-  }, [currentX, currentY]);
+    animate(newAngle, angle, { duration: 1, ease: 'easeInOut' });
+  }, [angle]);
 
   useEffect(() => {
     animate(delta, DELTA, { duration: 1, ease: 'easeInOut', delay: 0.3 });
@@ -63,27 +59,28 @@ const ConeVisual = ({ currentX, currentY, conePoints, onConePointsChange }: Prop
 
 export const Cone = () => {
   const { currentX, currentY } = useClickStore();
-  const { setConePoints, conePoints } = useConeStore();
+  const { setAngle, angle, setConePoints, conePoints } = useConeStore();
+
+  const handleConePointsChange = (angle: number, delta: number) => {
+    const newConePoints = computeConePoints(angle, delta);
+    setConePoints(newConePoints);
+  };
 
   useEffect(() => {
-    if (currentX === undefined || currentY === undefined || conePoints) {
+    if (currentX === undefined || currentY === undefined) {
       return;
     }
+    const angle = Math.atan2(currentY - CY, currentX - CX);
+    const initialConePoints = computeConePoints(angle, INITIAL_DELTA);
+    setAngle(angle);
+    setConePoints(initialConePoints);
+  }, [currentX, currentY]);
 
-    const initial = computeConePoints(currentX, currentY, INITIAL_DELTA);
-    setConePoints(initial);
-  }, [currentX, currentY, conePoints]);
-
-  if (currentX === undefined || currentY === undefined || !conePoints) {
+  if (currentX === undefined || currentY === undefined || angle === null || conePoints === null) {
     return null;
   }
 
   return (
-    <ConeVisual
-      currentX={currentX}
-      currentY={currentY}
-      conePoints={conePoints}
-      onConePointsChange={setConePoints}
-    />
+    <ConeVisual angle={angle} conePoints={conePoints} onConePointsChange={handleConePointsChange} />
   );
 };
