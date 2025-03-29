@@ -4,5 +4,4 @@ export type ConePoints = {
   ray1: Point;
   ray2: Point;
   polygon: [Point, Point, Point];
-  angle: number;
 };

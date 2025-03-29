@@ -12,12 +12,12 @@ import {
 import { Cone } from './Cone';
 import { Eye } from './Eye';
 import { Star } from './Star';
-import { useAnimationStore, useClickStore } from '../store';
+import { useAnimationStore } from '../store';
 import { useMotionValue, useMotionValueEvent } from 'motion/react';
 import { animate } from 'motion';
+import { getShortestAngle } from '../utils';
 
 export const GameBoard = () => {
-  const { setCurrentPosition } = useClickStore();
   const { setTargetAngle, setAngle, setDelta } = useAnimationStore();
   const animationAngle = useMotionValue(0);
   const animationDelta = useMotionValue(INITIAL_DELTA);
@@ -30,9 +30,6 @@ export const GameBoard = () => {
   useMotionValueEvent(animationDelta, 'change', () => {
     setDelta(animationDelta.get());
   });
-
-  const normalizeAngle = (angle: number) => ((angle + Math.PI) % (2 * Math.PI)) - Math.PI;
-  const shortestAngle = (from: number, to: number) => from + normalizeAngle(to - from);
 
   const handleClick = (e: MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -48,7 +45,6 @@ export const GameBoard = () => {
 
     if (!isFirstSetDone.current) {
       if (distance <= CIRCLE_RADIUS && distance > PUPIL_RADIUS) {
-        setCurrentPosition(clickX, clickY);
         setTargetAngle(angle);
         animationAngle.set(angle);
         animate(animationDelta, DELTA, { duration: 1, ease: 'easeInOut', delay: 0.3 });
@@ -59,9 +55,8 @@ export const GameBoard = () => {
 
     setTargetAngle(angle);
     const from = animationAngle.get();
-    const target = shortestAngle(from, angle);
+    const target = getShortestAngle(from, angle);
     animate(animationAngle, target, { duration: 1, ease: 'easeInOut' });
-    setCurrentPosition(clickX, clickY);
   };
 
   return (

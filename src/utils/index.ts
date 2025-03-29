@@ -1,2 +1,3 @@
 export { computeConePoints, computePupilPositionTowardTarget } from './compute-utils';
-export { isPointInTriangle } from './isPointInTriangle';
+export { getShortestAngle } from './getShortestAngle';
+export { getNormalizeAngle } from './getNormalizeAngle';

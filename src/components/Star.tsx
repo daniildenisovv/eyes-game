@@ -1,7 +1,7 @@
 import { StarIcon } from './icons';
-import { isPointInTriangle } from '../utils';
-import { useConeStore } from '../store/cone-store';
 import { CX, CY } from '../constants';
+import { useAnimationStore } from '../store';
+import { getNormalizeAngle } from '../utils';
 
 type Props = {
   x: number;
@@ -9,12 +9,15 @@ type Props = {
 };
 
 export const Star = ({ x, y }: Props) => {
-  const conePoints = useConeStore(state => state.conePoints);
+  const { angle, delta } = useAnimationStore();
 
-  const isShouldShow =
-    conePoints && isPointInTriangle({ x, y }, { x: CX, y: CY }, conePoints.ray1, conePoints.ray2);
+  if (angle === undefined) return null;
 
-  if (!isShouldShow) return null;
+  const starAngle = getNormalizeAngle(Math.atan2(y - CY, x - CX));
+  const normalizedAngle = getNormalizeAngle(angle);
+  const angleDiff = Math.abs(getNormalizeAngle(starAngle - normalizedAngle));
+
+  if (angleDiff > delta) return null;
 
   return (
     <div

@@ -19,6 +19,5 @@ export function computeConePoints(angle: number, delta: number): ConePoints {
     ray1,
     ray2,
     polygon: [{ x: CX, y: CY }, ray1, ray2],
-    angle: angle,
   };
 }
