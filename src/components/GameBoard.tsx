@@ -31,6 +31,9 @@ export const GameBoard = () => {
     setDelta(animationDelta.get());
   });
 
+  const normalizeAngle = (angle: number) => ((angle + Math.PI) % (2 * Math.PI)) - Math.PI;
+  const shortestAngle = (from: number, to: number) => from + normalizeAngle(to - from);
+
   const handleClick = (e: MouseEvent<SVGSVGElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const scaleX = WIDTH / rect.width;
@@ -38,11 +41,12 @@ export const GameBoard = () => {
     const clickX = (e.clientX - rect.left) * scaleX;
     const clickY = (e.clientY - rect.top) * scaleY;
     const angle = Math.atan2(clickY - CY, clickX - CX);
-    if (!isFirstSetDone.current) {
-      const dx = clickX - CX;
-      const dy = clickY - CY;
-      const distance = Math.sqrt(dx * dx + dy * dy);
 
+    const dx = clickX - CX;
+    const dy = clickY - CY;
+    const distance = Math.hypot(dx, dy);
+
+    if (!isFirstSetDone.current) {
       if (distance <= CIRCLE_RADIUS && distance > PUPIL_RADIUS) {
         setCurrentPosition(clickX, clickY);
         setTargetAngle(angle);
@@ -50,11 +54,14 @@ export const GameBoard = () => {
         animate(animationDelta, DELTA, { duration: 1, ease: 'easeInOut', delay: 0.3 });
         isFirstSetDone.current = true;
       }
-    } else {
-      setTargetAngle(angle);
-      animate(animationAngle, angle, { duration: 1, ease: 'easeInOut' });
-      setCurrentPosition(clickX, clickY);
+      return;
     }
+
+    setTargetAngle(angle);
+    const from = animationAngle.get();
+    const target = shortestAngle(from, angle);
+    animate(animationAngle, target, { duration: 1, ease: 'easeInOut' });
+    setCurrentPosition(clickX, clickY);
   };
 
   return (
