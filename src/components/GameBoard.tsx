@@ -18,7 +18,7 @@ import { animate } from 'motion';
 import { getShortestAngle } from '../utils';
 
 export const GameBoard = () => {
-  const { setTargetAngle, setAngle, setDelta } = useAnimationStore();
+  const { setAngle, setDelta } = useAnimationStore();
   const animationAngle = useMotionValue(0);
   const animationDelta = useMotionValue(INITIAL_DELTA);
   const isFirstSetDone = useRef(false);
@@ -45,7 +45,6 @@ export const GameBoard = () => {
 
     if (!isFirstSetDone.current) {
       if (distance <= CIRCLE_RADIUS && distance > PUPIL_RADIUS) {
-        setTargetAngle(angle);
         animationAngle.set(angle);
         animate(animationDelta, DELTA, { duration: 1, ease: 'easeInOut', delay: 0.3 });
         isFirstSetDone.current = true;
@@ -53,7 +52,6 @@ export const GameBoard = () => {
       return;
     }
 
-    setTargetAngle(angle);
     const from = animationAngle.get();
     const target = getShortestAngle(from, angle);
     animate(animationAngle, target, { duration: 1, ease: 'easeInOut' });
