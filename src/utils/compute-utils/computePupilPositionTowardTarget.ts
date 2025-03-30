@@ -1,5 +1,5 @@
-import { CX, CY, PUPIL_DISTANCE } from '../../constants.ts';
-import { Point } from '../../types.ts';
+import { CX, CY, PUPIL_DISTANCE } from '../../constants';
+import { Point } from '../../types';
 
 export function computePupilPositionTowardTarget(angle: number): Point {
   const x = CX + PUPIL_DISTANCE * Math.cos(angle);

@@ -1,5 +1,5 @@
-import { ConePoints } from '../../types.ts';
-import { CX, CY, LENGTH } from '../../constants.ts';
+import { ConePoints } from '../../types';
+import { CX, CY, LENGTH } from '../../constants';
 
 export function computeConePoints(angle: number, delta: number): ConePoints {
   const a1 = angle - delta;

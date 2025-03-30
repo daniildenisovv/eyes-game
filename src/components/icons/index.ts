@@ -1,1 +1,1 @@
-export { StarIcon } from './StarIcon.tsx';
+export { StarIcon } from './StarIcon';

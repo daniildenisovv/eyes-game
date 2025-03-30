@@ -1,4 +1,4 @@
-import { useRef, MouseEvent } from 'react';
+import { useRef, MouseEvent, useCallback } from 'react';
 import {
   HEIGHT,
   WIDTH,
@@ -11,14 +11,14 @@ import {
 } from '../constants';
 import { Cone } from './Cone';
 import { Eye } from './Eye';
-import { Star } from './Star';
-import { useAnimationStore } from '../store';
+import { useAngleStore } from '../store';
 import { useMotionValue, useMotionValueEvent } from 'motion/react';
 import { animate } from 'motion';
 import { getShortestAngle } from '../utils';
+import { StarsLayer } from './StarsLayer';
 
 export const GameBoard = () => {
-  const { setAngle, setDelta } = useAnimationStore();
+  const { setAngle, setDelta } = useAngleStore();
   const animationAngle = useMotionValue(0);
   const animationDelta = useMotionValue(INITIAL_DELTA);
   const isFirstSetDone = useRef(false);
@@ -31,20 +31,17 @@ export const GameBoard = () => {
     setDelta(animationDelta.get());
   });
 
-  const handleClick = (e: MouseEvent<SVGSVGElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const scaleX = WIDTH / rect.width;
-    const scaleY = HEIGHT / rect.height;
-    const clickX = (e.clientX - rect.left) * scaleX;
-    const clickY = (e.clientY - rect.top) * scaleY;
-    const angle = Math.atan2(clickY - CY, clickX - CX);
-
-    const dx = clickX - CX;
-    const dy = clickY - CY;
-    const distance = Math.hypot(dx, dy);
+  const handleClick = useCallback((e: MouseEvent<SVGSVGElement>) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - left) * WIDTH) / width;
+    const y = ((e.clientY - top) * HEIGHT) / height;
+    const dx = x - CX;
+    const dy = y - CY;
+    const angle = Math.atan2(dy, dx);
 
     if (!isFirstSetDone.current) {
-      if (distance <= CIRCLE_RADIUS && distance > PUPIL_RADIUS) {
+      const dist = Math.hypot(dx, dy);
+      if (dist <= CIRCLE_RADIUS && dist > PUPIL_RADIUS) {
         animationAngle.set(angle);
         animate(animationDelta, DELTA, { duration: 1, ease: 'easeInOut', delay: 0.3 });
         isFirstSetDone.current = true;
@@ -52,14 +49,15 @@ export const GameBoard = () => {
       return;
     }
 
-    const from = animationAngle.get();
-    const target = getShortestAngle(from, angle);
-    animate(animationAngle, target, { duration: 1, ease: 'easeInOut' });
-  };
+    animate(animationAngle, getShortestAngle(animationAngle.get(), angle), {
+      duration: 1,
+      ease: 'easeInOut',
+    });
+  }, []);
 
   return (
     <>
-      <Star x={100} y={200} />
+      <StarsLayer />
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         preserveAspectRatio="xMidYMid meet"
