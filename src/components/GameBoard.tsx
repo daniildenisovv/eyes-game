@@ -16,6 +16,8 @@ import { useMotionValue, useMotionValueEvent } from 'motion/react';
 import { animate } from 'motion';
 import { getShortestAngle } from '../utils';
 import { StarsLayer } from './StarsLayer';
+import Lottie from 'lottie-react';
+import backgroundAnimation from '../assets/lottie/background.json';
 
 export const GameBoard = () => {
   const { setAngle, setDelta, setTargetAngle, setIsAngleAnimationDone, setIsDeltaAnimationDone } =
@@ -46,7 +48,7 @@ export const GameBoard = () => {
         animationAngle.set(angle);
         animate(animationDelta, DELTA, {
           duration: 0.8,
-          ease: 'easeInOut',
+          ease: 'easeIn',
           delay: 0.3,
           onComplete: () => {
             setIsDeltaAnimationDone(true);
@@ -68,17 +70,25 @@ export const GameBoard = () => {
   }, []);
 
   return (
-    <>
-      <StarsLayer />
+    <div className="relative h-screen w-full overflow-hidden">
+      <Lottie
+        animationData={backgroundAnimation}
+        loop
+        autoplay
+        className="pointer-events-none absolute inset-0 z-0 h-full w-full bg-black"
+      />
+
       <svg
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         preserveAspectRatio="xMidYMid meet"
         onClick={handleClick}
-        style={{ width: '100%', height: '100vh', backgroundColor: 'black', display: 'block' }}
+        className="relative block h-screen w-full"
       >
         <Cone />
         <Eye />
       </svg>
-    </>
+
+      <StarsLayer />
+    </div>
   );
 };

@@ -6,7 +6,7 @@ import { computePupilPositionTowardTarget } from '../../utils';
 import { useWiggle } from '../../hooks';
 
 const PUPIL_ANIMATION_DURATION = 0.5;
-const PUPIL_ANIMATION_EASE = 'easeIn';
+const PUPIL_ANIMATION_EASE = 'easeInOut';
 const PUPIL_WIGGLE_AMPLITUDE = 5;
 const PUPIL_WIGGLE_UPDATE_INTERVAL = 100;
 const PUPIL_WIGGLE_ANIMATION_DURATION = 0.15;

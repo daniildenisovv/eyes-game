@@ -32,7 +32,7 @@ export const Cone = () => {
           <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
       </defs>
-
+      <polygon points={conePolygon} fill="black" />
       <polygon points={conePolygon} fill="url(#coneGradient)" />
     </>
   );
