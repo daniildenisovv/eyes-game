@@ -18,7 +18,8 @@ import { getShortestAngle } from '../utils';
 import { StarsLayer } from './StarsLayer';
 
 export const GameBoard = () => {
-  const { setAngle, setDelta } = useAngleStore();
+  const { setAngle, setDelta, setTargetAngle, setIsAngleAnimationDone, setIsDeltaAnimationDone } =
+    useAngleStore();
   const animationAngle = useMotionValue(0);
   const animationDelta = useMotionValue(INITIAL_DELTA);
   const isFirstSetDone = useRef(false);
@@ -43,15 +44,26 @@ export const GameBoard = () => {
       const dist = Math.hypot(dx, dy);
       if (dist <= CIRCLE_RADIUS && dist > PUPIL_RADIUS) {
         animationAngle.set(angle);
-        animate(animationDelta, DELTA, { duration: 1, ease: 'easeInOut', delay: 0.3 });
+        animate(animationDelta, DELTA, {
+          duration: 0.8,
+          ease: 'easeInOut',
+          delay: 0.3,
+          onComplete: () => {
+            setIsDeltaAnimationDone(true);
+            setIsAngleAnimationDone(true);
+          },
+        });
         isFirstSetDone.current = true;
+        setTargetAngle(angle);
       }
       return;
     }
-
+    setTargetAngle(angle);
+    setIsAngleAnimationDone(false);
     animate(animationAngle, getShortestAngle(animationAngle.get(), angle), {
-      duration: 1,
+      duration: 0.8,
       ease: 'easeInOut',
+      onComplete: () => setIsAngleAnimationDone(true),
     });
   }, []);
 
