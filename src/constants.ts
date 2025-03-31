@@ -2,21 +2,6 @@ import { StarSize, StarsMap } from './types';
 
 export const DELTA = Math.PI / 8;
 export const INITIAL_DELTA = Math.PI / 250;
-export const vw = window.innerWidth;
-export const vh = window.innerHeight;
-
-export const WIDTH = vw;
-export const HEIGHT = vh;
-
-const MAX_CIRCLE_RADIUS = 132;
-const MAX_WIDTH = 430;
-export const CIRCLE_RADIUS = Math.min(MAX_CIRCLE_RADIUS, (vw / MAX_WIDTH) * MAX_CIRCLE_RADIUS);
-export const PUPIL_RADIUS = CIRCLE_RADIUS * 0.4;
-export const PUPIL_DISTANCE = CIRCLE_RADIUS * 0.8;
-export const PUPIL_SIZE = PUPIL_RADIUS * 2;
-export const LENGTH = Math.max(WIDTH, HEIGHT) * 0.588;
-export const CX = WIDTH / 2;
-export const CY = HEIGHT / 2;
 
 export const STAR_SIZE_PX: Record<StarSize, number> = {
   xl: 98,

@@ -1,10 +1,11 @@
 import { useStarsStore, useAngleStore } from '../store';
 import { getNormalizeAngle } from '../utils';
 import { useMemo } from 'react';
-import { CX, CY, HEIGHT, WIDTH } from '../constants';
+import { useLayoutVars } from './use-layout-vars';
 
 export const useVisibleStars = () => {
   const { stars } = useStarsStore();
+  const { HEIGHT, CY, WIDTH, CX } = useLayoutVars();
   const { angle, delta, isDeltaAnimationDone, isAngleAnimationDone } = useAngleStore();
 
   const normalizedAngle = useMemo(() => (angle ? getNormalizeAngle(angle) : 0), [angle]);
@@ -22,7 +23,17 @@ export const useVisibleStars = () => {
 
       return angleDiff <= delta;
     });
-  }, [stars, delta, isDeltaAnimationDone, isAngleAnimationDone, normalizedAngle]);
+  }, [
+    stars,
+    delta,
+    isDeltaAnimationDone,
+    isAngleAnimationDone,
+    normalizedAngle,
+    HEIGHT,
+    CY,
+    WIDTH,
+    CX,
+  ]);
 
   return { visibleStars };
 };

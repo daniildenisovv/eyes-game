@@ -1,14 +1,5 @@
 import { useRef, MouseEvent, useCallback } from 'react';
-import {
-  HEIGHT,
-  WIDTH,
-  CX,
-  CY,
-  CIRCLE_RADIUS,
-  PUPIL_RADIUS,
-  DELTA,
-  INITIAL_DELTA,
-} from '../constants';
+import { DELTA, INITIAL_DELTA } from '../constants';
 import { Cone } from './Cone';
 import { Eye } from './Eye';
 import { useAngleStore } from '../store';
@@ -18,6 +9,7 @@ import { getShortestAngle } from '../utils';
 import { StarsLayer } from './StarsLayer';
 import Lottie from 'lottie-react';
 import backgroundAnimation from '../assets/lottie/background.json';
+import { useLayoutVars } from '../hooks';
 
 const ANGLE_ANIMATION_DURATION = 0.8;
 const ANGLE_ANIMATION_EASE = 'easeInOut';
@@ -28,6 +20,8 @@ const DELTA_ANIMATION_EASE = 'easeIn';
 export const GameBoard = () => {
   const { setAngle, setDelta, setTargetAngle, setIsAngleAnimationDone, setIsDeltaAnimationDone } =
     useAngleStore();
+
+  const { CX, CY, WIDTH, HEIGHT, CIRCLE_RADIUS, PUPIL_RADIUS } = useLayoutVars();
   const animationAngle = useMotionValue(0);
   const animationDelta = useMotionValue(INITIAL_DELTA);
   const isFirstSetDone = useRef(false);
@@ -40,41 +34,44 @@ export const GameBoard = () => {
     setDelta(animationDelta.get());
   });
 
-  const handleClick = useCallback((e: MouseEvent<SVGSVGElement>) => {
-    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - left) * WIDTH) / width;
-    const y = ((e.clientY - top) * HEIGHT) / height;
-    const dx = x - CX;
-    const dy = y - CY;
-    const angle = Math.atan2(dy, dx);
+  const handleClick = useCallback(
+    (e: MouseEvent<SVGSVGElement>) => {
+      const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+      const x = ((e.clientX - left) * WIDTH) / width;
+      const y = ((e.clientY - top) * HEIGHT) / height;
+      const dx = x - CX;
+      const dy = y - CY;
+      const angle = Math.atan2(dy, dx);
 
-    if (!isFirstSetDone.current) {
-      const dist = Math.hypot(dx, dy);
-      if (dist <= CIRCLE_RADIUS && dist > PUPIL_RADIUS) {
-        animationAngle.set(angle);
-        setTargetAngle(angle);
-        animate(animationDelta, DELTA, {
-          duration: DELTA_ANIMATION_DURATION,
-          ease: DELTA_ANIMATION_EASE,
-          delay: DELTA_ANIMATION_DELAY,
-          onComplete: () => {
-            setIsDeltaAnimationDone(true);
-            setIsAngleAnimationDone(true);
-          },
-        });
-        isFirstSetDone.current = true;
+      if (!isFirstSetDone.current) {
+        const dist = Math.hypot(dx, dy);
+        if (dist <= CIRCLE_RADIUS && dist > PUPIL_RADIUS) {
+          animationAngle.set(angle);
+          setTargetAngle(angle);
+          animate(animationDelta, DELTA, {
+            duration: DELTA_ANIMATION_DURATION,
+            ease: DELTA_ANIMATION_EASE,
+            delay: DELTA_ANIMATION_DELAY,
+            onComplete: () => {
+              setIsDeltaAnimationDone(true);
+              setIsAngleAnimationDone(true);
+            },
+          });
+          isFirstSetDone.current = true;
+        }
+        return;
       }
-      return;
-    }
 
-    setTargetAngle(angle);
-    setIsAngleAnimationDone(false);
-    animate(animationAngle, getShortestAngle(animationAngle.get(), angle), {
-      duration: ANGLE_ANIMATION_DURATION,
-      ease: ANGLE_ANIMATION_EASE,
-      onComplete: () => setIsAngleAnimationDone(true),
-    });
-  }, []);
+      setTargetAngle(angle);
+      setIsAngleAnimationDone(false);
+      animate(animationAngle, getShortestAngle(animationAngle.get(), angle), {
+        duration: ANGLE_ANIMATION_DURATION,
+        ease: ANGLE_ANIMATION_EASE,
+        onComplete: () => setIsAngleAnimationDone(true),
+      });
+    },
+    [CX, CY, WIDTH, HEIGHT, CIRCLE_RADIUS, PUPIL_RADIUS],
+  );
 
   return (
     <div className="relative h-screen w-full overflow-hidden">

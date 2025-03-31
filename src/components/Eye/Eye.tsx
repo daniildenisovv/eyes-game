@@ -1,16 +1,17 @@
-import { CX, CY, CIRCLE_RADIUS } from '../../constants';
 import { EyeHighlight } from './EyeHighlight';
 import { EyePupil } from './EyePupil';
 import { useId } from 'react';
-
-const EYE_SIZE = CIRCLE_RADIUS * 2;
-const EYE_OFFSET = CIRCLE_RADIUS;
-const EYE_X = CX - EYE_OFFSET;
-const EYE_Y = CY - EYE_OFFSET;
+import { useLayoutVars } from '../../hooks';
 
 export const Eye = () => {
+  const { CY, CX, CIRCLE_RADIUS } = useLayoutVars();
   const eyePatternId = useId();
   const eyeClipId = useId();
+
+  const eyeSize = CIRCLE_RADIUS * 2;
+  const eyeOffset = CIRCLE_RADIUS;
+  const eyeX = CX - eyeOffset;
+  const eyeY = CY - eyeOffset;
 
   return (
     <>
@@ -18,15 +19,15 @@ export const Eye = () => {
         <pattern
           id={eyePatternId}
           patternUnits="userSpaceOnUse"
-          width={EYE_SIZE}
-          height={EYE_SIZE}
-          x={EYE_X}
-          y={EYE_Y}
+          width={eyeSize}
+          height={eyeSize}
+          x={eyeX}
+          y={eyeY}
         >
           <image
             href="/eye-bg.png"
-            width={EYE_SIZE}
-            height={EYE_SIZE}
+            width={eyeSize}
+            height={eyeSize}
             preserveAspectRatio="xMidYMid slice"
           />
         </pattern>
