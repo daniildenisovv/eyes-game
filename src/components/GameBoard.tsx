@@ -19,6 +19,12 @@ import { StarsLayer } from './StarsLayer';
 import Lottie from 'lottie-react';
 import backgroundAnimation from '../assets/lottie/background.json';
 
+const ANGLE_ANIMATION_DURATION = 0.8;
+const ANGLE_ANIMATION_EASE = 'easeInOut';
+const DELTA_ANIMATION_DURATION = 0.8;
+const DELTA_ANIMATION_DELAY = 0.3;
+const DELTA_ANIMATION_EASE = 'easeIn';
+
 export const GameBoard = () => {
   const { setAngle, setDelta, setTargetAngle, setIsAngleAnimationDone, setIsDeltaAnimationDone } =
     useAngleStore();
@@ -46,25 +52,26 @@ export const GameBoard = () => {
       const dist = Math.hypot(dx, dy);
       if (dist <= CIRCLE_RADIUS && dist > PUPIL_RADIUS) {
         animationAngle.set(angle);
+        setTargetAngle(angle);
         animate(animationDelta, DELTA, {
-          duration: 0.8,
-          ease: 'easeIn',
-          delay: 0.3,
+          duration: DELTA_ANIMATION_DURATION,
+          ease: DELTA_ANIMATION_EASE,
+          delay: DELTA_ANIMATION_DELAY,
           onComplete: () => {
             setIsDeltaAnimationDone(true);
             setIsAngleAnimationDone(true);
           },
         });
         isFirstSetDone.current = true;
-        setTargetAngle(angle);
       }
       return;
     }
+
     setTargetAngle(angle);
     setIsAngleAnimationDone(false);
     animate(animationAngle, getShortestAngle(animationAngle.get(), angle), {
-      duration: 0.8,
-      ease: 'easeInOut',
+      duration: ANGLE_ANIMATION_DURATION,
+      ease: ANGLE_ANIMATION_EASE,
       onComplete: () => setIsAngleAnimationDone(true),
     });
   }, []);

@@ -1,2 +1,2 @@
 export { computeConePoints } from './computeConePoints';
-export { computePupilPositionTowardTarget } from './computePupilPositionTowardTarget';
+export { computePupilPoints } from './computePupilPoints';

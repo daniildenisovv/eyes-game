@@ -14,7 +14,7 @@ export const CIRCLE_RADIUS = Math.min(MAX_CIRCLE_RADIUS, (vw / MAX_WIDTH) * MAX_
 export const PUPIL_RADIUS = CIRCLE_RADIUS * 0.4;
 export const PUPIL_DISTANCE = CIRCLE_RADIUS * 0.8;
 export const PUPIL_SIZE = PUPIL_RADIUS * 2;
-export const LENGTH = Math.max(WIDTH, HEIGHT) * 0.6;
+export const LENGTH = Math.max(WIDTH, HEIGHT) * 0.588;
 export const CX = WIDTH / 2;
 export const CY = HEIGHT / 2;
 

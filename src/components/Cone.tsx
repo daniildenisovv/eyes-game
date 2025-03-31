@@ -1,7 +1,7 @@
 import { CX, CY, LENGTH } from '../constants';
 import { computeConePoints } from '../utils';
 import { useAngleStore } from '../store';
-import { useMemo } from 'react';
+import { useId, useMemo } from 'react';
 
 export const Cone = () => {
   const { angle, delta } = useAngleStore();
@@ -11,6 +11,7 @@ export const Cone = () => {
     const conePoints = computeConePoints(angle, delta);
     return conePoints.polygon.map(p => `${p.x},${p.y}`).join(' ');
   }, [angle, delta]);
+  const coneGradientId = useId();
 
   const linearGradientPoints = useMemo(() => {
     if (!angle) return null;
@@ -27,13 +28,17 @@ export const Cone = () => {
   return (
     <>
       <defs>
-        <linearGradient id="coneGradient" gradientUnits="userSpaceOnUse" {...linearGradientPoints}>
+        <linearGradient
+          id={coneGradientId}
+          gradientUnits="userSpaceOnUse"
+          {...linearGradientPoints}
+        >
           <stop offset="0" stopColor="white" stopOpacity="0.4" />
           <stop offset="1" stopColor="white" stopOpacity="0" />
         </linearGradient>
       </defs>
       <polygon points={conePolygon} fill="black" />
-      <polygon points={conePolygon} fill="url(#coneGradient)" />
+      <polygon points={conePolygon} fill={`url(#${coneGradientId})`} />
     </>
   );
 };

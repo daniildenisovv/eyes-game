@@ -2,7 +2,7 @@ import { useAngleStore } from '../../store';
 import { animate, motion, useMotionValue } from 'motion/react';
 import { CIRCLE_RADIUS, CX, CY, PUPIL_RADIUS, PUPIL_SIZE } from '../../constants';
 import { useEffect, useRef } from 'react';
-import { computePupilPositionTowardTarget } from '../../utils';
+import { computePupilPoints } from '../../utils';
 import { useWiggle } from '../../hooks';
 
 const PUPIL_ANIMATION_DURATION = 0.5;
@@ -13,11 +13,18 @@ const PUPIL_WIGGLE_ANIMATION_DURATION = 0.15;
 const PUPIL_WIGGLE_LERP_FACTOR = 0.1;
 const PUPIL_WIGGLE_MAX_DISTANCE = CIRCLE_RADIUS - PUPIL_RADIUS - 1;
 
+const PUPIL_CLICK_SCALE = 1.07;
+const PUPIL_CLICK_SCALE_DURATION = 0.1;
+const PUPIL_CLICK_RESET_DURATION = 0.2;
+const PUPIL_CLICK_EASE = 'easeOut';
+const PUPIL_CLICK_RESET_EASE = 'easeInOut';
+
 export const EyePupil = () => {
   const { targetAngle } = useAngleStore();
 
   const x = useMotionValue(CX);
   const y = useMotionValue(CY);
+  const scale = useMotionValue(1);
   const targetX = useRef(CX);
   const targetY = useRef(CY);
   const ignoreWiggle = useRef(false);
@@ -38,7 +45,7 @@ export const EyePupil = () => {
   useEffect(() => {
     if (targetAngle === undefined) return;
 
-    const { x: newX, y: newY } = computePupilPositionTowardTarget(targetAngle);
+    const { x: newX, y: newY } = computePupilPoints(targetAngle);
 
     ignoreWiggle.current = true;
     animate(x, newX, { duration: PUPIL_ANIMATION_DURATION, ease: PUPIL_ANIMATION_EASE });
@@ -54,14 +61,32 @@ export const EyePupil = () => {
     targetY.current = newY;
   }, [targetAngle]);
 
+  const handleClick = () => {
+    animate(scale, PUPIL_CLICK_SCALE, {
+      duration: PUPIL_CLICK_SCALE_DURATION,
+      ease: PUPIL_CLICK_EASE,
+      onComplete: () => {
+        animate(scale, 1, { duration: PUPIL_CLICK_RESET_DURATION, ease: PUPIL_CLICK_RESET_EASE });
+      },
+    });
+  };
+
   return (
     <motion.image
+      onClick={handleClick}
       href="/pupil-bg.png"
       width={PUPIL_SIZE}
       height={PUPIL_SIZE}
       x={x}
       y={y}
-      style={{ transform: `translate(-${PUPIL_RADIUS}px, -${PUPIL_RADIUS}px)` }}
+      style={{
+        originX: 0.5,
+        originY: 0.5,
+        scale,
+        translateX: -PUPIL_RADIUS,
+        translateY: -PUPIL_RADIUS,
+        cursor: 'pointer',
+      }}
     />
   );
 };
