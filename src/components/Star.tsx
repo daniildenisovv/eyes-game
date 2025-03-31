@@ -49,7 +49,7 @@ export const Star = ({ x, y, size, id, index }: Props) => {
 
   return (
     <motion.div
-      className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2"
+      className="pointer-events-auto absolute -translate-x-1/2 -translate-y-1/2 [filter:drop-shadow(0px_0px_16px_#c9c9c9)]"
       style={{ left: `${x}px`, top: `${y}px` }}
       onClick={handleStarClick}
       custom={index}
