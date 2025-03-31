@@ -1,1 +1,3 @@
-![DEMO](https://github.com/user-attachments/assets/51b81b2c-7ca7-4301-873e-43f6ac473086)
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/51b81b2c-7ca7-4301-873e-43f6ac473086" alt="Demo" width="600"/>
+</p>
