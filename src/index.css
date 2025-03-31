@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
+/* Базовая настройка */
 html, body {
     margin: 0;
     padding: 0;
-    height: 100%;
     width: 100%;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: 16px;
@@ -13,7 +13,13 @@ html, body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     box-sizing: border-box;
+
+    overflow: hidden;
+    overscroll-behavior: none;
+
+    height: 100svh;
 }
+
 *, *::before, *::after {
     box-sizing: inherit;
 }
