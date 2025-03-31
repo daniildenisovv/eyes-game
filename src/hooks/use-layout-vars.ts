@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 export const useLayoutVars = () => {
   const calcVars = useCallback(() => {
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = window.visualViewport?.width ?? window.innerWidth;
+    const vh = window.visualViewport?.height ?? window.innerHeight;
 
     const MAX_CIRCLE_RADIUS = 132;
     const MAX_WIDTH = 430;
