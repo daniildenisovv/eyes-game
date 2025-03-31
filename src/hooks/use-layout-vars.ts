@@ -34,8 +34,16 @@ export const useLayoutVars = () => {
 
   useEffect(() => {
     const onResize = () => setVars(calcVars());
+
     window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    window.visualViewport?.addEventListener('resize', onResize);
+    window.visualViewport?.addEventListener('scroll', onResize);
+
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.visualViewport?.removeEventListener('resize', onResize);
+      window.visualViewport?.removeEventListener('scroll', onResize);
+    };
   }, [calcVars]);
 
   return vars;

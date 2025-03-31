@@ -74,7 +74,7 @@ export const GameBoard = () => {
   );
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="relative h-[100dvh] w-full">
       <Lottie
         animationData={backgroundAnimation}
         loop
@@ -86,7 +86,7 @@ export const GameBoard = () => {
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         preserveAspectRatio="xMidYMid meet"
         onClick={handleClick}
-        className="relative block h-screen w-full"
+        className="relative block h-[100dvh] w-full"
       >
         <Cone />
         <Eye />
